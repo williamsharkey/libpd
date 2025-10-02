@@ -547,8 +547,10 @@ static void slider_float(t_slider *x, t_floatarg f)
 {
     slider_set(x, f);
     // if(x->x_gui.x_fsf.x_put_in2out) // propigate slider change messages
+    // post("slider_float called with value %f", f);
     slider_bang(x);
 }
+
 
 static void slider_size(t_slider *x, t_symbol *s, int ac, t_atom *av)
 {
@@ -697,7 +699,7 @@ static void *slider_new(t_symbol *s, int argc, t_atom *argv)
         ldy = -9;
     }
 
-    if(((argc == 17)||(argc == 18))&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1)
+    if((argc >= 17)&&IS_A_FLOAT(argv,0)&&IS_A_FLOAT(argv,1) // wm: some environments have more parameters
        &&IS_A_FLOAT(argv,2)&&IS_A_FLOAT(argv,3)
        &&IS_A_FLOAT(argv,4)&&IS_A_FLOAT(argv,5)
        &&(IS_A_SYMBOL(argv,6)||IS_A_FLOAT(argv,6))
@@ -736,7 +738,11 @@ static void *slider_new(t_symbol *s, int argc, t_atom *argv)
     else if(x->x_gui.x_fsf.x_font_style == 2) strcpy(x->x_gui.x_font, "times");
     else { x->x_gui.x_fsf.x_font_style = 0;
         strcpy(x->x_gui.x_font, sys_font); }
-    if(x->x_gui.x_fsf.x_rcv_able) pd_bind(&x->x_gui.x_obj.ob_pd, x->x_gui.x_rcv);
+    
+    if(x->x_gui.x_fsf.x_rcv_able) {
+        pd_bind(&x->x_gui.x_obj.ob_pd, x->x_gui.x_rcv);
+    }
+
     x->x_gui.x_ldx = ldx;
     x->x_gui.x_ldy = ldy;
     x->x_gui.x_fontsize = (fs < 4)?4:fs;
